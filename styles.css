@@ -1,0 +1,126 @@
+body {
+    background-color: green;
+    text-align: center;
+}
+
+h1 {
+    color: gold
+}
+
+h2, p {
+    color: white;
+}
+.card {
+    
+    height: 210px;
+    width: 150px;
+    margin-left: -2rem;
+    transition: transform 250ms ease;
+}
+
+#playerTotalWins, #dealerTotalWins  {
+    display: inline;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+
+#hit {
+    background-color: green;
+    position: relative;
+    
+}
+
+#stand {
+    background-color: red;
+    position: relative;
+}
+
+#playAgain {
+    background-color: blue;
+    position: relative; 
+}
+
+#result {
+    color: gold;
+}
+
+
+.button {
+    margin-right: 20px;
+    position: fixed;
+    font-family: 'Righteous', serif;
+    color: white;
+    border: dashed white;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    font-size: 20px;
+    text-align: center;
+    filter: drop-shadow(0 0 0.75rem black);
+  
+    
+}
+
+#playAgain {
+    display: none;
+}
+
+img {
+    color: black;
+    filter: drop-shadow(0 0 0.75rem);
+    margin: 10px;
+}
+
+.card:hover {
+    transform: scale(1.05);
+
+}
+
+.card:hover {
+    transform: translateY(-1rem);
+}
+
+.card:hover ~ .card {
+    transform: translateX(1rem);
+}
+
+.button:active {
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+
+  .wins, .score {
+    filter: drop-shadow(0 0 0.75rem black);
+    padding: 5px;
+    display: inline;
+    background-color: rgba(255,255,255,0.5);
+    border: white solid;
+    border-radius: 16px;
+  }
+
+  @import url(https://fonts.googleapis.com/css?family=Righteous);
+
+  
+  html, body {
+    height: 100%;
+    }
+    body {
+      text-align: center;
+      }
+    body:before {
+      content: '';
+      display: inline;
+      vertical-align: middle;
+      font-size: 0;
+      height: 100%;
+      }
+  
+  h1 {
+    display: inline;
+    color: white;
+    font-family: 'Righteous', serif;
+    font-size: 12em; 
+    text-shadow: .03em .03em 0 black;
+    }
+   
