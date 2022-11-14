@@ -4,6 +4,7 @@ Blackjack game created using HTML, CSS & Javascript. [Demo here!](https://soh-ai
 
 To do:
 
-- Add jQuery
 - Make UI improvements
-- UI spacing
+- Add betting
+- Add insurance
+- Add splitting
