@@ -8,3 +8,4 @@ To do:
 - Add betting
 - Add insurance
 - Add splitting
+- Add sounds
