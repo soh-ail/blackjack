@@ -1,6 +1,4 @@
-// TO DO: Add jquery
-
-
+let gameStatus = "Player Turn - Press Hit or Stand to Proceed";
 let dealerScore = 0;
 let playerScore = 0;
 let deck = [];
@@ -17,11 +15,12 @@ window.onload = function() {
     createDeck();
     shuffleDeck();
     startGame();
-    document.getElementById("player-score").innerHTML = "Player Score: " + playerScore;
-    document.getElementById("dealer-score").innerHTML = "Dealer Score: " + "?";
-    document.getElementById("dealerTotalWins").innerText = "Dealer Wins: " + dealerTotalWins;
-    document.getElementById("playerTotalWins").innerText = "Player Wins: " + playerTotalWins;
-}
+    $("#gameStatus").html(gameStatus)
+    $("#player-score").html("Player Score: " + playerScore);
+    $("#dealer-score").html("Dealer Score: ?");
+    $("#dealerTotalWins").html("Dealer Wins: " + dealerTotalWins);
+    $("#playerTotalWins").html("Player Wins: " + playerTotalWins);
+    }
 
 
 const createDeck = () => {
@@ -50,7 +49,7 @@ const shuffleDeck = () => {
    return deck;
 }
 
-
+// starts game: deals 2 cards each to dealer and player
 const startGame = () => {
     faceDown = deck.shift(); 
     dealerScore += cardScore(faceDown);
@@ -63,7 +62,7 @@ const startGame = () => {
         cardImg.src = "./images/" + nextCard + ".svg";
         playerScore += cardScore(nextCard);
         playerAces += checkAce(nextCard);
-        document.getElementById("player-card").append(cardImg);
+        $("#player-card").append(cardImg);
         cardImg.className = "card"
     }
 
@@ -73,23 +72,24 @@ const startGame = () => {
         cardImg.src = "./images/" + nextCard + ".svg";
         dealerScore += cardScore(nextCard);
         dealerAces += checkAce(nextCard);
-        document.getElementById("dealer").append(cardImg);
+        $("#dealer").append(cardImg);
         cardImg.className = "card"
         dealerCount ++;
     }
 
+    // runs hit or stand on click of either button
     document.getElementById("hit").addEventListener("click", hit);
     document.getElementById("stand").addEventListener("click", stand);
 }
 
 
-
+// checks how many aces player/dealer has, if score > 21, will reduce score by 10 for each ace until score < 21
 const checkPlayerScore = (playerScore, playerAces) => {
     while (playerScore > 21 && playerAces > 0) {
         playerScore -=10;
         playerAces -= 1;
     }
-    document.getElementById("player-score").innerHTML = "Player Score: " + playerScore;
+    $("#player-score").html("Player Score: " + playerScore);
     return playerScore
 }
 
@@ -98,22 +98,27 @@ const checkDealerScore = (dealerScore, dealerAces) => {
        dealerScore -=10;
         dealerAces -= 1;
     }
-    document.getElementById("dealer-score").innerHTML = "Dealer Score: " + dealerScore;
+    $("#dealer-score").html("Dealer Score: " + dealerScore);
     return dealerScore
 }
+
+// checks and retuns value of card. If card is NaN (i.e. J,K,Q,A) will return 10 or 11
 const cardScore = (card) => {
     cardCheck = card.split("_")[0];
     cardValue = cardCheck
 
-    // checks if card is not a numbered card - if not an ace will return 10.
+    
     if (isNaN(cardValue)) {
         if (cardValue === "ace") {
+            // by default ace is 11 unless score > 21
             return 11;
         }
             return 10;
     }
     return Number(cardValue);
 }
+
+// counts ace in player/dealers hand - used to determine how many times checkPlayerScore/checkDealerScore iterates
 
 const checkAce = (card) => {
     if (card[0] === "a") {
@@ -126,26 +131,31 @@ const hit = () => {
         return;
     }
 
+    // creates image corresponding to value of first position in deck array and adds to player score
     let cardImg = document.createElement("img")
     let nextCard = deck.shift();
     cardImg.src = "./images/" + nextCard + ".svg";
     playerScore += cardScore(nextCard);
     playerAces += checkAce(nextCard);
-    document.getElementById("player-card").append(cardImg);
+    $("#player-card").append(cardImg);
     cardImg.className = "card"
     checkPlayerScore(playerScore, playerAces);
 
+    // if after reducing aces to 1, score is still >21, then prevent further hits
     if (checkPlayerScore(playerScore, playerAces) > 21) {
         hitActive = false;
     }
 }
 
 const stand = () => {
+    // if stand button is inactive, do not allow press again
     if (standActive === false) {
         return;
     }
-    checkDealerScore(dealerScore, dealerAces); 
 
+    // deals cards for dealer until score drawn is at least 16
+    // creates images and score for cards in same way as player
+    checkDealerScore(dealerScore, dealerAces); 
     while (dealerScore < 17) {
         let cardImg = document.createElement("img")
         let nextCard = deck.shift();
@@ -153,57 +163,63 @@ const stand = () => {
         dealerScore += cardScore(nextCard);
         dealerAces += checkAce(nextCard);
         checkDealerScore(dealerScore, dealerAces);   
-        document.getElementById("dealer").append(cardImg);
+        $("#dealer").append(cardImg);;
         cardImg.className = "card"  
     }
 
+    // deactivates hit button so player can't get more cards after dealer reveals score
     hitActive = false;
-    document.getElementById("faceDown").src = "./images/" + faceDown + ".svg"
+
+    //reveal facedown card
+    $("#faceDown").attr("src", `./images/${faceDown}.svg`);
     
 
     dealerScore = checkDealerScore(dealerScore, dealerAces);
     playerScore = checkPlayerScore(playerScore, playerAces);      
 
-    let result = "";
-
+    
+    // evaluate result
     if (playerScore > 21) {
-        result = "Player Bust, Dealer Wins!";
+        gameStatus = "Player Bust, Dealer Wins!";
         dealerTotalWins += 1;
     }
     else if (dealerScore > 21) {
-        result = "Dealer Bust, Player Wins!";
+        gameStatus = "Dealer Bust, Player Wins!";
         playerTotalWins += 1;
     }
     else if (dealerScore === playerScore) {
-        result = "Tied with the Dealer";
+        gameStatus = "Tied with the Dealer";
     }
     else if (playerScore < dealerScore) {
-        result = "Dealer Wins!";
+        gameStatus = "Dealer Wins!";
         dealerTotalWins += 1;
     } else if (playerScore > dealerScore) {
-        result = "Player Wins!";
+        gameStatus = "Player Wins!";
         playerTotalWins += 1;
     }
-
-    document.getElementById("result").innerText = result;
-    document.getElementById("playAgain").style.display = "inline";
+    
+    //update score and game status, reveals play again button
+    $("#gameStatus").html(gameStatus);
+    $("#playAgain").show();
     document.getElementById("playAgain").addEventListener("click", playAgain);
-    document.getElementById("playerTotalWins").innerHTML = "Player Wins: " + playerTotalWins;
-    document.getElementById("dealerTotalWins").innerHTML = "Dealer Wins: " + dealerTotalWins;
+    $("#dealerTotalWins").html("Dealer Wins: " + dealerTotalWins);
+    $("#playerTotalWins").html("Player Wins: " + playerTotalWins);
     standActive = false;
 }
 
+// resets game and creates new shuffled deck
 const playAgain = () => {
     resetGame();
     createDeck();
     shuffleDeck();
     startGame();
-    document.getElementById("player-score").innerHTML = "Player Score: " + playerScore;
-    document.getElementById("dealer-score").innerHTML = "Dealer Score: " + "?";
+    $("#player-score").html("Player Score: " + playerScore);
+    $("#dealer-score").html("Dealer Score: ?");
 }
 
 const resetGame = () => {
 
+    // deletes all images to "reset" cards
     for (var i= document.images.length; i-->0;) {
     document.images[i].parentNode.removeChild(document.images[i]);
     }
@@ -217,8 +233,10 @@ const resetGame = () => {
     hitActive = true;
     standActive = true;
     dealerCount = 0;
-    result = "​";
-    document.getElementById("result").innerText = result;
+    gameStatus = "Player Turn - Press Hit or Stand to Proceed";
+    document.getElementById("gameStatus").innerText = gameStatus;
+
+    // creates dealers face down card again
     
     let faceDownImg = new Image();
     faceDownImg.src = "./images/back.png"
@@ -226,7 +244,7 @@ const resetGame = () => {
     faceDownImg.id = "faceDown";
     document.getElementById("dealer").appendChild(faceDownImg);
     
-    document.getElementById("playAgain").style.display = "none";
+    $("#playAgain").hide();
 }
 
 
